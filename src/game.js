@@ -4,12 +4,13 @@ class Star {
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.starSize = 5 - Math.round(5/speed);
     }
 
     draw() {
         let col = 50 * this.speed;
         this.ctx.fillStyle = `rgb(${col}, ${col}, ${col})`;
-        this.ctx.fillRect(this.x, this.y, 2, 2);
+        this.ctx.fillRect(this.x, this.y, this.starSize, this.starSize);
         this.x -= this.speed;
         if (this.x < 0) this.x = window.innerWidth;
     }
