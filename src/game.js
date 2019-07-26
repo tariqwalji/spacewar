@@ -15,7 +15,11 @@ class Star {
     }
 
     static createRandom(ctx) {
-        return new Star(Math.ceil(Math.random() * window.innerWidth), Math.ceil(Math.random() * window.innerHeight), Math.ceil(Math.random() * 5), ctx);
+        return new Star(
+            Math.ceil(Math.random() * window.innerWidth),
+            Math.ceil(Math.random() * window.innerHeight), 
+            Math.ceil(Math.random() * 5),
+            ctx);
     }
 }
 
@@ -25,9 +29,9 @@ class Renderer {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ctx = this.canvas.getContext("2d");
-
+        
         this.stars = [];
-        for (let i = 0; i < 100; i++) {
+        for(let i=0; i<100; i++) {
             this.stars.push(Star.createRandom(this.ctx));
         }
     }

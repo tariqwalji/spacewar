@@ -4,6 +4,7 @@
   "description": "Multiplayer space shooter.",
   "main": "game.js",
   "scripts": {
+    "build": "babel src/game.js --out-file game.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/tariqwalji/spacewar/issues"
   },
-  "homepage": "https://github.com/tariqwalji/spacewar#readme"
+  "homepage": "https://github.com/tariqwalji/spacewar#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  }
 }
