@@ -31,6 +31,39 @@ class Star {
     }
 }
 
+
+class Laser {
+    constructor(x, y, angle, speed, world) {
+        this.world = world;
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.angle = angle;
+
+        this.image = new Image(45, 45);
+        this.image.src = "spaceshooter_ByJanaChumi/items/bullets/1.png";      
+        this.visible = false;  
+    }
+
+    draw() {
+        if(this.visible) {
+            this.x -= Math.sin(this.angle) * this.speed;
+            this.y -= Math.cos(this.angle) * this.speed;
+    
+            this.world.ctx.save();
+            this.world.ctx.translate(this.x, this.y);
+            this.world.ctx.rotate((2*Math.PI) - this.angle);
+            this.world.ctx.drawImage(this.image, 0-(this.image.width/2), 0-(this.image.height/2));
+            this.world.ctx.restore();
+
+            if (this.x < 0 || this.y < 0 || this.x > window.innerWidth || this.y > window.innerHeight) {
+                this.visible = false;
+            }
+        }
+
+    }
+}
+
 class World {
     constructor() {
         this.canvas = document.getElementById("game");
@@ -48,6 +81,18 @@ class World {
         for(let i=0; i<100; i++) {
             this.stars.push(Star.createRandom(this));
         }
+
+        this.lasers = [];
+        for(let i=0; i<20; i++) {
+            this.lasers.push(new Laser(0, 0, 0, 0, this));
+        }
+
+        this.isFiring = false;
+        this.isRecoil = false;
+        this.isTurningLeft = false;
+        this.isTurningRight = false;
+        this.isSpeedingUp = false;
+        this.isSlowingDown = false;
     }
 
     clearScreen() {
@@ -55,9 +100,49 @@ class World {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    handleInput() {
+        if (this.isFiring && !this.isRecoil) {
+            for(let i=0; i<this.lasers.length; i++) {
+                if(!this.lasers[i].visible) {
+                    this.lasers[i].angle = this.playerDirection;
+                    this.lasers[i].x = this.canvas.width/2;
+                    this.lasers[i].y = this.canvas.height/2;
+                    this.lasers[i].speed = (this.playerSpeed * 4);
+                    this.lasers[i].visible = true;
+                    this.isRecoil = true;
+                    setTimeout(() => {this.isRecoil = false;}, 200);                           
+                    break;        
+                }
+            } 
+        }
+
+        if(this.isTurningLeft) {
+            this.playerDirection += (Math.PI/360)*this.playerSpeed;
+            if(this.playerDirection > 2*Math.PI) this.playerDirection = 0;
+        }
+
+        if(this.isTurningRight) {
+            this.playerDirection -= (Math.PI/360)*this.playerSpeed;
+            if(this.playerDirection < 0) this.playerDirection = 2*Math.PI;
+        }
+
+        if(this.isSpeedingUp) {
+            this.playerSpeed++;
+            if(this.playerSpeed > 10) this.playerSpeed = 10;
+        }
+
+        if(this.isSlowingDown) {
+            this.playerSpeed--;
+            if(this.playerSpeed < 2) this.playerSpeed = 2;
+        }       
+    }
+
     draw() {
+        this.handleInput();
+
         this.clearScreen();
         this.stars.forEach(s => s.draw());
+        this.lasers.forEach(l => l.draw());
 
         this.ctx.save();
         this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
@@ -70,24 +155,41 @@ class World {
         this.renderLoop = setInterval(this.draw.bind(this), 50);
         document.addEventListener("keydown", e => {
             switch(e.code) {
+                case "Space":
+                    this.isFiring = true;
+                    break;
                 case "ArrowUp":
-                    this.playerSpeed++;
-                    if(this.playerSpeed > 10) this.playerSpeed = 10;
+                    this.isSpeedingUp = true;
                     break;
                 case "ArrowDown":
-                        this.playerSpeed--;
-                        if(this.playerSpeed < 2) this.playerSpeed = 2;
-                        break;
+                    this.isSlowingDown = true;
+                    break;
                 case "ArrowLeft":
-                    this.playerDirection += (Math.PI/360)*this.playerSpeed;
-                    if(this.playerDirection > 2*Math.PI) this.playerDirection = 0;
+                    this.isTurningLeft = true;
                     break;
                 case "ArrowRight":
-                    this.playerDirection -= (Math.PI/360)*this.playerSpeed;
-                    if(this.playerDirection < 0) this.playerDirection = 2*Math.PI;
-                    break;
-                }
+                    this.isTurningRight = true;
+            }
         });
+
+        document.addEventListener("keyup", e => {
+            switch(e.code) {
+                case "Space":
+                    this.isFiring = false;
+                    break;
+                case "ArrowUp":
+                    this.isSpeedingUp = false;
+                    break;
+                case "ArrowDown":
+                    this.isSlowingDown = false;
+                    break;
+                case "ArrowLeft":
+                    this.isTurningLeft = false;
+                    break;
+                case "ArrowRight":
+                    this.isTurningRight = false;
+            }
+        });   
     }
 }
 
