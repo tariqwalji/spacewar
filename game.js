@@ -61,7 +61,7 @@ class World {
 
         this.ctx.save();
         this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
-        this.ctx.rotate(1 - (2*Math.PI) * this.playerDirection);
+        this.ctx.rotate((2*Math.PI) - this.playerDirection);
         this.ctx.drawImage(this.playerImage, 0-(this.playerImage.width/2), 0-(this.playerImage.height/2));
         this.ctx.restore();
     }
