@@ -9,7 +9,7 @@ class Star {
     }
 
     draw() {
-        let col = 50 * this.speed;
+        let col = 15 * this.speed;
         this.world.ctx.fillStyle = `rgb(${col}, ${col}, ${col})`;
         this.world.ctx.fillRect(this.x, this.y, this.starSize, this.starSize);
         this.x += Math.sin(this.world.playerDirection) * (this.speed + this.world.playerSpeed);
@@ -26,7 +26,7 @@ class Star {
         return new Star(
             Math.ceil(Math.random() * window.innerWidth),
             Math.ceil(Math.random() * window.innerHeight), 
-            Math.ceil(Math.random() * 5),
+            Math.ceil(Math.random() * 10),
             world);
     }
 }
@@ -73,12 +73,14 @@ class World {
         this.playerSpeed = 10;
         this.playerSpeed = 5;
         this.playerDirection = Math.PI;
+        this.worldWidth = 2000;
+        this.worldHeight = 2000;
 
         this.playerImage = new Image(114, 114);
         this.playerImage.src = "spaceshooter_ByJanaChumi/items/8.png";
         
         this.stars = [];
-        for(let i=0; i<100; i++) {
+        for(let i=0; i<300; i++) {
             this.stars.push(Star.createRandom(this));
         }
 
@@ -93,6 +95,9 @@ class World {
         this.isTurningRight = false;
         this.isSpeedingUp = false;
         this.isSlowingDown = false;
+
+        this.playerWorldPositionX = 10;
+        this.playerWorldPositionY = 10;
     }
 
     clearScreen() {
@@ -149,6 +154,29 @@ class World {
         this.ctx.rotate((2*Math.PI) - this.playerDirection);
         this.ctx.drawImage(this.playerImage, 0-(this.playerImage.width/2), 0-(this.playerImage.height/2));
         this.ctx.restore();
+
+        this.ctx.font = "30px Arial Bold";
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText("World " + this.playerWorldPositionX + ", Y: " + this.playerWorldPositionY, 40, 40);
+ 
+        this.playerWorldPositionX += Math.sin(this.playerDirection) * this.playerSpeed;
+        this.playerWorldPositionY += Math.cos(this.playerDirection) * this.playerSpeed;
+
+        if (this.playerWorldPositionX < 0) {
+            this.playerWorldPositionX = this.worldWidth;
+        }
+
+        if (this.playerWorldPositionY > this.worldWidth) {
+            this.playerWorldPositionX = 0;
+        }
+
+        if (this.playerWorldPositionY < 0) {
+            this.playerWorldPositionY = this.worldHeight;
+        }
+
+        if (this.playerWorldPositionY > this.worldHeight) {
+            this.playerWorldPositionY = 0;
+        }
     }
 
     run() {
