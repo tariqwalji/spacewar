@@ -1,0 +1,20 @@
+{
+  "name": "spacewar",
+  "source": "src/client/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tariqwalji/spacewar.git"
+  },
+  "author": "Tariq Hussein",
+  "dependencies": {
+    "phaser": "^3.55.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.8.2"
+  }
+}
